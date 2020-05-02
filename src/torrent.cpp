@@ -6450,7 +6450,7 @@ namespace {
 
 		for (int i = 0; i < req.count; ++i)
 		{
-			if (f[layer_start_idx + i].is_all_zeros())
+			if (!f.has_node(layer_start_idx + i))
 				return {};
 			ret.push_back(f[layer_start_idx + i]);
 		}
@@ -6472,8 +6472,7 @@ namespace {
 			{
 				int const sibling = merkle_get_sibling(layer_start_idx);
 
-				if (f[layer_start_idx].is_all_zeros()
-					|| f[sibling].is_all_zeros())
+				if (!f.has_node(layer_start_idx) || !f.has_node(sibling))
 					return {};
 
 				ret.push_back(f[sibling]);

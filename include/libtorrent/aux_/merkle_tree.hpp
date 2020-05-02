@@ -67,6 +67,8 @@ struct TORRENT_EXTRA_EXPORT merkle_tree
 	std::size_t size() const;
 	int end_index() const { return int(size()); }
 
+	bool has_node(int const idx) const;
+
 	sha256_hash& operator[](int const idx) { return m_tree[idx]; }
 	sha256_hash const& operator[](int const idx) const { return m_tree[idx]; }
 
