@@ -92,6 +92,12 @@ struct TORRENT_EXTRA_EXPORT merkle_tree
 		, span<sha256_hash const> tree
 		, span<std::pair<sha256_hash, sha256_hash> const> proofs);
 
+
+	std::vector<piece_index_t> check_pieces(int const base
+		, int const index, int const blocks_per_piece, int const file_piece_offset
+		, span<sha256_hash const> hashes);
+
+
 private:
 	char const* m_root = nullptr;
 	aux::vector<sha256_hash> m_tree;
