@@ -34,6 +34,8 @@ POSSIBILITY OF SUCH DAMAGE.
 #define TORRENT_MERKLE_TREE_HPP_INCLUDED
 
 #include <cstdint>
+#include <map>
+#include <utility> // for pair
 
 #include "libtorrent/sha1_hash.hpp" // for sha256_hash
 #include "libtorrent/aux_/vector.hpp"
@@ -69,6 +71,8 @@ struct TORRENT_EXTRA_EXPORT merkle_tree
 
 	bool has_node(int const idx) const;
 
+	bool compare_node(int const idx, sha256_hash const& h) const;
+
 	sha256_hash& operator[](int const idx) { return m_tree[idx]; }
 	sha256_hash const& operator[](int const idx) const { return m_tree[idx]; }
 
@@ -79,6 +83,14 @@ struct TORRENT_EXTRA_EXPORT merkle_tree
 	void clear(int num_leafs, int level_start);
 
 	bool load_piece_layer(span<char const> piece_layer);
+
+	// inserts the hashes in "tree" at position "dest_start_idx"
+	// the proofs are the left and right hashes above the root of "tree",
+	// anchoring it in the existing tree. These are also inserted into the tree
+	std::map<piece_index_t, std::vector<int>> add_hashes(
+		int dest_start_idx, int blocks_per_piece
+		, span<sha256_hash const> tree
+		, span<std::pair<sha256_hash, sha256_hash> const> proofs);
 
 private:
 	char const* m_root = nullptr;
