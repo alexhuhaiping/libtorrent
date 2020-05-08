@@ -36,6 +36,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <cstdint>
 #include <map>
 #include <utility> // for pair
+#include <tuple>
 
 #include "libtorrent/sha1_hash.hpp" // for sha256_hash
 #include "libtorrent/aux_/vector.hpp"
@@ -73,14 +74,9 @@ struct TORRENT_EXTRA_EXPORT merkle_tree
 
 	bool compare_node(int const idx, sha256_hash const& h) const;
 
-	sha256_hash& operator[](int const idx) { return m_tree[idx]; }
 	sha256_hash const& operator[](int const idx) const { return m_tree[idx]; }
 
 	std::vector<sha256_hash> build_vector() const;
-
-	void fill(int const piece_layer_size);
-	void fill(int const piece_layer_size, int const level_start);
-	void clear(int num_leafs, int level_start);
 
 	bool load_piece_layer(span<char const> piece_layer);
 
@@ -97,8 +93,20 @@ struct TORRENT_EXTRA_EXPORT merkle_tree
 		, int const index, int const blocks_per_piece, int const file_piece_offset
 		, span<sha256_hash const> hashes);
 
+	enum class set_block_result
+	{
+		ok, unknown, hash_failed
+	};
+
+	std::tuple<set_block_result, int, int> set_block(int block_index
+		, sha256_hash const& h);
 
 private:
+
+	void fill(int const piece_layer_size);
+	void fill(int const piece_layer_size, int const level_start);
+	void clear(int num_leafs, int level_start);
+
 	char const* m_root = nullptr;
 	aux::vector<sha256_hash> m_tree;
 	int m_num_blocks = 0;
